@@ -36,22 +36,21 @@ Results
 
 Nodes 3 and 4: the iperf tests work perfectly
 
-Nodes 7 and 8: there are issues with the GNURadio client/servers:
+Nodes 7 and 8: different behavior between "run to completion" or
+"prompt for exit" modes:
 
 - node7: client/server in run-to-completion mode: the logs show that
-  the client and server both run and exit correctly, but the server
-  output file or stdout contain no data
+  the client and server both run and exit correctly, and both server
+  and client .out files are generated and are of the correct size
 
 - node8: client/server in prompt-for-exit mode: the logs show that
   client and server both run correctly, but both client and server
-  output files or stdout contain no data
+  .out files are empty
 
-Additionnaly, if run interactively in a container on my workstation:
-
-- run-to-completion version seem to run and exit correctly but both
-  client and server output files are empty
-
-- prompt-for-exit version show two "Press Enter to quit:" prompts
-  (server and client). If I hit Ctrl-C at the second one (the client
-  one), this is the only case where I have the two client and server
-  output files as expected (20Kbytes for client, 10Kbytes for server)
+Before adding a throttle block to all flowgraphs, there were issues in
+run-to-completion mode: the logs showed that the client and server
+both run and exit correctly, but the server output file contained no
+data. The explanation (thanks Léo) is that without the throttle block,
+and when the threshold of the [head] block is lower than the buffer
+size, the [head] block can trigger the stop of the flowgraph *before*
+[file sink] sees any data.

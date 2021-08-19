@@ -9,3 +9,9 @@ push:
 run:
 	docker run -dti --net=host m1mbert/testpesteve:latest
 	ssh -Xp 2222 root@localhost
+
+patch:
+	for F in *.py ; do sed -ie "s/    main()/    import datetime\n    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': $$F start')\n    main()\n    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': $$F end')/" $$F; done
+
+retrieve:
+	scp -P 2222 root@localhost:*.py root@localhost:*.grc .

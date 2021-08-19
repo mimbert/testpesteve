@@ -27,27 +27,35 @@ class client_run_to_completion(gr.top_block):
         ##################################################
         # Variables
         ##################################################
+        self.size = size = 100000
         self.samp_rate = samp_rate = 32000
 
         ##################################################
         # Blocks
         ##################################################
         self.blocks_udp_sink_0 = blocks.udp_sink(gr.sizeof_char*1, '127.0.0.1', 5987, 1472, True)
-        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, 20480)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
+        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, size)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, 'client-run-to-completion.out', False)
         self.blocks_file_sink_0.set_unbuffered(True)
-        self.blocks_file_descriptor_sink_0 = blocks.file_descriptor_sink(gr.sizeof_char*1, 1)
         self.analog_sig_source_x_0 = analog.sig_source_b(samp_rate, analog.GR_COS_WAVE, 1000, 1, 0, 0)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_head_0, 0))
-        self.connect((self.blocks_head_0, 0), (self.blocks_file_descriptor_sink_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_head_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_head_0, 0), (self.blocks_udp_sink_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_head_0, 0))
 
+
+    def get_size(self):
+        return self.size
+
+    def set_size(self, size):
+        self.size = size
+        self.blocks_head_0.set_length(self.size)
 
     def get_samp_rate(self):
         return self.samp_rate
@@ -55,6 +63,7 @@ class client_run_to_completion(gr.top_block):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
 
 
@@ -79,6 +88,6 @@ def main(top_block_cls=client_run_to_completion, options=None):
 
 if __name__ == '__main__':
     import datetime
-    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: client-run-to-completion start")
+    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': client_run_to_completion.py start')
     main()
-    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: client-run-to-completion end")
+    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': client_run_to_completion.py end')

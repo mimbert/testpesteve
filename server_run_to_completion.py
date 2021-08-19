@@ -26,31 +26,40 @@ class server_run_to_completion(gr.top_block):
         ##################################################
         # Variables
         ##################################################
+        self.size = size = 100000
         self.samp_rate = samp_rate = 32000
 
         ##################################################
         # Blocks
         ##################################################
         self.blocks_udp_source_0 = blocks.udp_source(gr.sizeof_char*1, '127.0.0.1', 5987, 1472, True)
-        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, 10240)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
+        self.blocks_head_0 = blocks.head(gr.sizeof_char*1, size // 2)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, 'server-run-to-completion.out', False)
         self.blocks_file_sink_0.set_unbuffered(True)
-        self.blocks_file_descriptor_sink_0 = blocks.file_descriptor_sink(gr.sizeof_char*1, 1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_head_0, 0), (self.blocks_file_descriptor_sink_0, 0))
         self.connect((self.blocks_head_0, 0), (self.blocks_file_sink_0, 0))
-        self.connect((self.blocks_udp_source_0, 0), (self.blocks_head_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_head_0, 0))
+        self.connect((self.blocks_udp_source_0, 0), (self.blocks_throttle_0, 0))
 
+
+    def get_size(self):
+        return self.size
+
+    def set_size(self, size):
+        self.size = size
+        self.blocks_head_0.set_length(self.size // 2)
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
 
 
 
@@ -75,6 +84,6 @@ def main(top_block_cls=server_run_to_completion, options=None):
 
 if __name__ == '__main__':
     import datetime
-    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: server-run-to-completion start")
+    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': server_run_to_completion.py start')
     main()
-    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: server-run-to-completion end")
+    print(datetime.datetime.isoformat(datetime.datetime.today()) + ': server_run_to_completion.py end')

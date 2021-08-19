@@ -63,7 +63,23 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [384, 260.0]
+    coordinate: [40, 124.0]
+    rotation: 0
+    state: true
+- name: blocks_file_descriptor_sink_0
+  id: blocks_file_descriptor_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fd: '1'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 292.0]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -81,7 +97,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1096, 180.0]
+    coordinate: [536, 204.0]
     rotation: 0
     state: true
 - name: blocks_head_0
@@ -99,7 +115,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [792, 312.0]
+    coordinate: [312, 164.0]
     rotation: 0
     state: true
 - name: blocks_udp_sink_0
@@ -118,12 +134,13 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1104, 340.0]
+    coordinate: [536, 100.0]
     rotation: 0
     state: true
 
 connections:
 - [analog_sig_source_x_0, '0', blocks_head_0, '0']
+- [blocks_head_0, '0', blocks_file_descriptor_sink_0, '0']
 - [blocks_head_0, '0', blocks_file_sink_0, '0']
 - [blocks_head_0, '0', blocks_udp_sink_0, '0']
 

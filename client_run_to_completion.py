@@ -36,6 +36,7 @@ class client_run_to_completion(gr.top_block):
         self.blocks_head_0 = blocks.head(gr.sizeof_char*1, 20480)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, 'client-run-to-completion.out', False)
         self.blocks_file_sink_0.set_unbuffered(True)
+        self.blocks_file_descriptor_sink_0 = blocks.file_descriptor_sink(gr.sizeof_char*1, 1)
         self.analog_sig_source_x_0 = analog.sig_source_b(samp_rate, analog.GR_COS_WAVE, 1000, 1, 0, 0)
 
 
@@ -43,6 +44,7 @@ class client_run_to_completion(gr.top_block):
         # Connections
         ##################################################
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_head_0, 0))
+        self.connect((self.blocks_head_0, 0), (self.blocks_file_descriptor_sink_0, 0))
         self.connect((self.blocks_head_0, 0), (self.blocks_file_sink_0, 0))
         self.connect((self.blocks_head_0, 0), (self.blocks_udp_sink_0, 0))
 
@@ -76,4 +78,7 @@ def main(top_block_cls=client_run_to_completion, options=None):
 
 
 if __name__ == '__main__':
+    import datetime
+    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: client-run-to-completion start")
     main()
+    print(f"{datetime.datetime.isoformat(datetime.datetime.today())}: client-run-to-completion end")

@@ -1,0 +1,19 @@
+description: check UDP client / server
+duration: 1500
+nodes:
+  node3:
+    container:
+      image: m1mbert/testpesteve:latest
+      command: /root/client-server-iperf-tcp.sh
+  node4:
+    container:
+      image: m1mbert/testpesteve:latest
+      command: /root/client-server-iperf-udp.sh
+  node7:
+    container:
+      image: m1mbert/testpesteve:latest
+      command: /root/client-server-gnuradio-udp-run-to-completion.sh
+  node8:
+    container:
+      image: m1mbert/testpesteve:latest
+      command: /root/client-server-gnuradio-udp-prompt-for-exit.sh

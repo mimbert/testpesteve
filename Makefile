@@ -1,4 +1,4 @@
-PHONY: all build push
+PHONY: all build push run
 
 all: build push
 

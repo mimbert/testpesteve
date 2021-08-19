@@ -1,5 +1,3 @@
-PHONY: all build push run
-
 all: build push
 
 build:
